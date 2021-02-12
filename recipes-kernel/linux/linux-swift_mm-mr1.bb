@@ -8,12 +8,14 @@ LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://COPYING;md5=d7810fab7487fb0aad327b76f1be7cd7"
 COMPATIBLE_MACHINE = "swift"
 
-SRC_URI = "git://android.googlesource.com/kernel/msm;branch=android-msm-swift-3.18-marshmallow-mr1-wear-release;protocol=https \
+SRC_URI = "git://android.googlesource.com/kernel/msm;branch=android-msm-swift-3.18-nougat-dr-release;protocol=https \
     file://defconfig \
     file://img_info \
     file://0001-scripts-dtc-Remove-redundant-YYLOC-global-declaratio.patch \
-    file://0003-ARM-uaccess-remove-put_user-code-duplication.patch"
-SRCREV = "2f958570bcf7457da4827dc8da5ff3195d447cb3"
+    file://0003-ARM-uaccess-remove-put_user-code-duplication.patch \
+    file://0004-including-backports-from-4.1.48.patch \
+    file://0005-backport-HCI-SMD-to-backported-bluetooth-stack.patch"
+SRCREV = "63708089e87e2f5964304f82cf0d36638df03615"
 LINUX_VERSION ?= "3.18"
 PV = "${LINUX_VERSION}+marshmallow"
 S = "${WORKDIR}/git"
