@@ -45,8 +45,7 @@ download and then build them (this may take a while):
   cd android-swift
   # For now the repo manifest is pretty much swift-specific, maybe we should 
   # split/merge branches later?
-  ../repo init -u https://github.com/AsteroidOS/android_manifest \
-		-b marshmallow-dr1.5-release -g all,-notdefault,-darwin,-mips --depth=1
+  ../repo init -u https://github.com/AsteroidOS/android_manifest -b marshmallow-dr1.5-release -g all,-notdefault,-darwin,-mips --depth=1
   ../repo sync -qc
 
   ### Build (can only be done in bash)

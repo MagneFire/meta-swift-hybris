@@ -1,0 +1,11 @@
+[Unit]
+Description=Enable hci-smd driver
+
+[Service]
+Type=simple
+ExecStartPre=-/bin/sleep 10
+ExecStart=-/bin/sh /system/etc/init.qcom.bt.sh
+
+[Install]
+WantedBy=basic.target
+

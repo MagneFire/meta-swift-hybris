@@ -5,6 +5,23 @@ on init
     symlink /dev/fb0 /dev/graphics/fb0
     chown system root /sys/class/timed_output/vibrator/enable
 
+    mkdir /data/
+    mkdir /data/misc/
+    mkdir /data/misc/asdf/
+
+    load_system_props
+    restorecon_recursive /persist
+#    chown    system    system    /sys/class/i2c-adapter/i2c-1/1-001c/mode
+
+#    chmod -h 775 /persist/sensors
+#    chmod -h 664 /persist/sensors/sensors_settings
+#    chown -h system.root /persist/sensors/sensors_settings
+
+#    mkdir -p /data/misc/sensors
+#    chmod -h 775 /data/misc/sensors
+#    mkdir /persist/sensors 0770 system system
+#    mkdir /data/misc/asus_sensors 0775 system system
+
     class_start core
 
 service logd /system/bin/logd
@@ -15,3 +32,16 @@ service logd /system/bin/logd
 
 service servicemanager /system/bin/servicemanager
     class core
+
+#service sensors /system/bin/sensors.qcom
+#    class core
+
+service config_bluetooth /system/bin/sh /system/etc/init.qcom.bt.sh "onboot"
+    class core
+    user root
+    oneshot
+
+service wcnss_service /system/bin/wcnss_service
+    class core
+    user root
+    oneshot

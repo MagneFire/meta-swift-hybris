@@ -1,0 +1,97 @@
+From 03a27c62f159a51b3e48691882e17c27f5daf7b5 Mon Sep 17 00:00:00 2001
+From: MagneFire <IDaNLContact@gmail.com>
+Date: Thu, 25 Feb 2021 10:39:40 +0100
+Subject: [PATCH] configfs: Add ASUS function for USB connection state.
+
+---
+ drivers/usb/gadget/Makefile   |  2 +-
+ drivers/usb/gadget/configfs.c | 17 ++++++++++++++++-
+ 2 files changed, 17 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/gadget/Makefile b/drivers/usb/gadget/Makefile
+index f405d3e9d6d..6c2e0b44e80 100644
+--- a/drivers/usb/gadget/Makefile
++++ b/drivers/usb/gadget/Makefile
+@@ -7,7 +7,7 @@ ccflags-y	+= -I$(srctree)/drivers/usb/gadget/udc -I$(srctree)/drivers/usb/gadget
+ 
+ obj-$(CONFIG_USB_LIBCOMPOSITE)	+= libcomposite.o
+ libcomposite-y			:= usbstring.o config.o epautoconf.o
+-libcomposite-y			+= composite.o functions.o u_f.o
++libcomposite-y			+= composite.o functions.o configfs.o u_f.o
+ 
+ obj-y				+= debug.o
+ g_android-y			:= android.o
+diff --git a/drivers/usb/gadget/configfs.c b/drivers/usb/gadget/configfs.c
+index 77b2ea7431f..4c88f06becf 100644
+--- a/drivers/usb/gadget/configfs.c
++++ b/drivers/usb/gadget/configfs.c
+@@ -22,6 +22,7 @@ void acc_disconnect(void);
+ static struct class *android_class;
+ static struct device *android_device;
+ static int index;
++static bool asus_enabled;
+ 
+ struct device *create_function_device(char *name)
+ {
+@@ -34,6 +35,13 @@ struct device *create_function_device(char *name)
+ EXPORT_SYMBOL_GPL(create_function_device);
+ #endif
+ 
++//ASUS_BSP+++ "[USB][NA][Spec] Add ASUS charger mode support"
++bool getSoftconnect(void)
++{
++	return asus_enabled;
++}
++//ASUS_BSP--- "[USB][NA][Spec] Add ASUS charger mode support"
++
+ int check_user_usb_string(const char *name,
+ 		struct usb_gadget_strings *stringtab_dev)
+ {
+@@ -1477,8 +1485,10 @@ static void android_work(struct work_struct *data)
+ 	bool uevent_sent = false;
+ 
+ 	spin_lock_irqsave(&cdev->lock, flags);
+-	if (cdev->config)
++	if (cdev->config) {
+ 		status[1] = true;
++		asus_enabled = 1;
++	}
+ 
+ 	if (gi->connected != gi->sw_connected) {
+ 		if (gi->connected)
+@@ -1486,6 +1496,7 @@ static void android_work(struct work_struct *data)
+ 		else
+ 			status[2] = true;
+ 		gi->sw_connected = gi->connected;
++		asus_enabled = gi->connected;
+ 	}
+ 	spin_unlock_irqrestore(&cdev->lock, flags);
+ 
+@@ -1547,6 +1558,7 @@ static int android_setup(struct usb_gadget *gadget,
+ 	spin_lock_irqsave(&cdev->lock, flags);
+ 	if (!gi->connected) {
+ 		gi->connected = 1;
++		asus_enabled = 1;
+ 		schedule_work(&gi->work);
+ 	}
+ 	spin_unlock_irqrestore(&cdev->lock, flags);
+@@ -1589,6 +1601,7 @@ static void android_disconnect(struct usb_gadget *gadget)
+ #ifdef CONFIG_USB_CONFIGFS_F_ACC
+ 	acc_disconnect();
+ #endif
++	asus_enabled = 0;
+ 	gi->connected = 0;
+ 	schedule_work(&gi->work);
+ 	composite_disconnect(gadget);
+@@ -1790,6 +1803,8 @@ static int __init gadget_cfs_init(void)
+ {
+ 	int ret;
+ 
++	asus_enabled = 0;
++
+ 	config_group_init(&gadget_subsys.su_group);
+ 
+ 	ret = configfs_register_subsystem(&gadget_subsys);
+-- 
+2.30.1
+

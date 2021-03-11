@@ -1,0 +1,44 @@
+From 701d59f219cb6378bcdaf7fe3dbecd20295c1768 Mon Sep 17 00:00:00 2001
+From: MagneFire <IDaNLContact@gmail.com>
+Date: Thu, 18 Feb 2021 14:45:16 +0100
+Subject: [PATCH] touchscreen: Disable wakeup detection and palm reporting.
+
+---
+ drivers/input/touchscreen/hx852xes/himax_852xES.c | 4 ++++
+ drivers/input/touchscreen/hx852xes/himax_852xES.h | 2 +-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/input/touchscreen/hx852xes/himax_852xES.c b/drivers/input/touchscreen/hx852xes/himax_852xES.c
+index 061d5444d6b..d39fc15d277 100755
+--- a/drivers/input/touchscreen/hx852xes/himax_852xES.c
++++ b/drivers/input/touchscreen/hx852xes/himax_852xES.c
+@@ -2070,9 +2070,13 @@ static irqreturn_t himax_ts_thread(int irq, void *ptr)
+             ASUSEvtlog("[PM] GPIO triggered: %d\n", irq);
+             input_mt_slot(ts->input_dev,0);
+             input_mt_report_slot_state(ts->input_dev, MT_TOOL_FINGER, true);
++            input_report_abs(ts->input_dev, ABS_MT_TOUCH_MAJOR, 1);
++            input_report_abs(ts->input_dev, ABS_MT_WIDTH_MAJOR, 1);
++            input_report_abs(ts->input_dev, ABS_MT_PRESSURE, 1);
+             input_report_abs(ts->input_dev, ABS_MT_POSITION_X, 1);
+             input_report_abs(ts->input_dev, ABS_MT_POSITION_Y, 1);
+             input_sync(ts->input_dev);
++            msleep(300);
+             input_mt_slot(ts->input_dev,0);
+             input_mt_report_slot_state(ts->input_dev, MT_TOOL_FINGER, false);
+             input_sync(ts->input_dev);
+diff --git a/drivers/input/touchscreen/hx852xes/himax_852xES.h b/drivers/input/touchscreen/hx852xes/himax_852xES.h
+index e2bfe43695f..ba0c09b4786 100755
+--- a/drivers/input/touchscreen/hx852xes/himax_852xES.h
++++ b/drivers/input/touchscreen/hx852xes/himax_852xES.h
+@@ -84,7 +84,7 @@
+ #define HX_AUTO_UPDATE_FW
+ //#define HX_AUTO_UPDATE_CONFIG        //if enable HX_AUTO_UPDATE_CONFIG, need to disable HX_LOADIN_CONFIG
+ #define HX_SMART_WAKEUP
+-#define HX_PALM_REPORT
++//#define HX_PALM_REPORT
+ #define HX_CHECK_CRC_AP
+ #define HX_TIME_TELLING
+ //#define HX_ESD_WORKAROUND
+-- 
+2.30.1
+

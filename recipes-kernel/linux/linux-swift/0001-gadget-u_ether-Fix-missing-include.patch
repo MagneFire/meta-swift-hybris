@@ -1,0 +1,25 @@
+From 67a5826e8743b03b80fb788ef09e9b00f60b1f42 Mon Sep 17 00:00:00 2001
+From: MagneFire <IDaNLContact@gmail.com>
+Date: Thu, 21 Jan 2021 00:00:46 +0100
+Subject: [PATCH] gadget: u_ether: Fix missing include.
+
+---
+ drivers/usb/gadget/function/u_ether.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/gadget/function/u_ether.c b/drivers/usb/gadget/function/u_ether.c
+index f80aa277e1d..a5ae81a8bfa 100644
+--- a/drivers/usb/gadget/function/u_ether.c
++++ b/drivers/usb/gadget/function/u_ether.c
+@@ -28,7 +28,7 @@
+ #include <linux/notifier.h>
+ #include <linux/cpufreq.h>
+ #include "u_ether.h"
+-
++#include "rndis.h"
+ 
+ /*
+  * This component encapsulates the Ethernet link glue needed to provide
+-- 
+2.30.0
+
